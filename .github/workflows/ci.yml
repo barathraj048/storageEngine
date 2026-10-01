@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+test:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
+- uses: actions/setup-go@v5
+with:
+go-version-file: go.mod
+- run: test -z "$(gofmt -l .)" # formatting is not optional
+- run: go vet ./...
+- run: go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+- run: go test -race -count=1 ./...
+- run: go test ./internal/record -run '^$' -fuzz FuzzDecode -fuzztime 30s
+# from week 3: - run: go run ./cmd/crashtest -rounds 20
