@@ -72,7 +72,7 @@ Rules that hold in *every* mode:
 - **Order is preserved.** After any crash the surviving writes are a *prefix* of the acknowledged
   sequence (point-in-time recovery). We never keep write N+1 and lose write N.
 - **No garbage.** A torn or flipped record is detected by CRC and never returned.
-- **`Sync()` always works**, so a caller on `SyncNever` can add their own durability points.
+- `Sync()` **is honoured in every mode**, including SyncNever, so a caller can add their own **durability points**. It can still fail (ErrClosed, I/O error; see the API table).
 - **Visibility is after the append** (and after the fsync in `SyncAlways`). In `SyncBatch` a
   reader may see a value a power cut will later erase. That is part of the trade-off.
 - "Power cut" assumes the disk honours fsync. A drive that lies about flushing is out of scope.
